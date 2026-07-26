@@ -1,0 +1,17 @@
+# Secrets / environment
+.env
+*.log
+
+# Backups (keep directory, ignore contents)
+backups/*
+!backups/.gitkeep
+
+# SQL Server data (bind-mounted debugging artifacts, if any; the primary
+# data store is a named Docker volume, not tracked here at all)
+data/*
+!data/.gitkeep
+
+# Editors / OS cruft
+.vscode/
+.idea/
+.DS_Store

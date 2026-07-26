@@ -1,0 +1,69 @@
+# =============================================================================
+# SQL Server 2022 (Developer Edition) - Docker Compose deployment
+# =============================================================================
+# Uses the Compose Specification (no obsolete top-level "version:" key).
+#
+# Before starting:
+#   1. cp .env.example .env
+#   2. chmod 600 .env
+#   3. Edit .env and set a strong MSSQL_SA_PASSWORD
+#
+# Inspect the resolved configuration without starting anything:
+#   docker compose config
+#
+# This file does not build a custom image; it uses Microsoft's official
+# SQL Server 2022 image unmodified.
+# =============================================================================
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver2022
+    hostname: sqlserver2022
+
+    # Automatically restart unless the container is explicitly stopped by
+    # the user (e.g. via `docker compose stop`). Survives host reboots
+    # once the Docker daemon is enabled at boot.
+    restart: unless-stopped
+
+    environment:
+      # Required: confirms acceptance of the Microsoft EULA for this image.
+      ACCEPT_EULA: "Y"
+      # Developer Edition: free, full-featured, licensed for non-production
+      # development and testing use only.
+      MSSQL_PID: "Developer"
+      # Read from .env - never hard-code credentials in this file.
+      MSSQL_SA_PASSWORD: "${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in .env}"
+
+    ports:
+      # Bound to loopback only by default: not reachable from other hosts
+      # on the network. Change 127.0.0.1 to 0.0.0.0 (and open the firewall)
+      # only if you deliberately need remote access.
+      - "127.0.0.1:${MSSQL_PORT:-1433}:1433"
+
+    volumes:
+      # Named volume: SQL Server's data/log/secrets directory. This is what
+      # makes databases survive `docker compose down` (without -v) and
+      # container recreation/upgrades.
+      - sqlserver_data:/var/opt/mssql
+      # Host-mounted backups directory: .bak files written here from inside
+      # the container are immediately visible on the host filesystem.
+      - ./backups:/var/opt/mssql/backups
+
+    healthcheck:
+      # mssql-tools18 (with sqlcmd) ships inside the 2022-latest image.
+      # -C trusts the self-signed TLS certificate the container generates
+      # by default, which is expected for local development.
+      test:
+        [
+          "CMD-SHELL",
+          "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q \"SELECT 1\" -b -o /dev/null || exit 1"
+        ]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+      start_period: 30s
+
+volumes:
+  sqlserver_data:
+    name: sqlserver2022_data
