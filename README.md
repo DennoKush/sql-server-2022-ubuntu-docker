@@ -1,5 +1,12 @@
 # SQL Server 2022 on Ubuntu 24.04 via Docker
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platform: Ubuntu 24.04](https://img.shields.io/badge/Platform-Ubuntu%2024.04-E95420?logo=ubuntu&logoColor=white)](https://releases.ubuntu.com/24.04/)
+[![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docs.docker.com/compose/)
+[![SQL Server 2022 Developer](https://img.shields.io/badge/SQL%20Server-2022%20Developer-CC2927?logo=microsoftsqlserver&logoColor=white)](https://www.microsoft.com/en-us/sql-server/sql-server-2022)
+[![Shell: Bash](https://img.shields.io/badge/Shell-Bash-4EAA25?logo=gnubash&logoColor=white)](scripts/)
+[![Architecture: x86_64](https://img.shields.io/badge/Architecture-x86__64%20%2F%20amd64-555555?logo=amd&logoColor=white)](docs/01-prerequisites.md)
+
 A documented, scriptable deployment of **Microsoft SQL Server 2022
 Developer Edition** running in Docker on Ubuntu 24.04 LTS ("noble"), using
 the official Microsoft container image.
